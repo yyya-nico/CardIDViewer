@@ -22,7 +22,7 @@ int main(){
     auto result=fetch(names.data());
     if(result.find(L"2000 0000 0000 0011 2345")==std::wstring::npos || result.find(L"7351 8437 2088 8316 5535")==std::wstring::npos) return 5;
     if(fetch(L"Missing reader").find(L"libaribb25:")==std::wstring::npos)return 6;
-    systemProvider=true; // Exercise system message formatting with controlled PC/SC failures.
+    // Exercise message formatting with controlled failures from the local PC/SC DLL.
     const auto originalConnect=providerConnect;
     providerConnect=[](SCARDCONTEXT,LPCWSTR,DWORD,DWORD,LPSCARDHANDLE,LPDWORD)->LONG { return SCARD_E_NO_SMARTCARD; };
     const auto missing=fetch(names.data());
@@ -37,11 +37,10 @@ int main(){
     const auto readable=error(SCARD_E_NO_SMARTCARD);
     if(readable.find(L"0x8010000C")==std::wstring::npos || readable.find(text)==std::wstring::npos)return 20;
     if(error(static_cast<LONG>(0xDEADBEEF)).find(L"説明メッセージを取得できません。")==std::wstring::npos)return 21;
-    systemProvider=false;
-    if(error(SCARD_E_NO_SMARTCARD).find(text)!=std::wstring::npos)return 22;
     if(module){FreeLibrary(module);module=nullptr;}
     if(!load(false))return 7;
-    std::cout<<"PASS: local DLL, reader enumeration, ARIB ID format, check codes, malformed responses, two IDs, unknown reader, system DLL, readable Windows errors\n";
+    if(error(SCARD_E_NO_SMARTCARD).find(text)==std::wstring::npos)return 22;
+    std::cout<<"PASS: local DLL, reader enumeration, ARIB ID format, check codes, malformed responses, two IDs, unknown reader, system DLL, readable local and system PC/SC errors\n";
 }
 
 

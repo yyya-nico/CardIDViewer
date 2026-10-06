@@ -18,7 +18,6 @@ static decltype(cvTransmit) providerTransmit;
 static decltype(cvEstablish) providerEstablish;
 static decltype(cvList) providerList;
 static decltype(cvConnect) providerConnect;
-static bool systemProvider=true;
 static thread_local LONG lastPcscError=SCARD_S_SUCCESS;
 static LONG recordPcscError(LONG rc) {
     if(rc!=SCARD_S_SUCCESS) lastPcscError=rc;
@@ -44,7 +43,7 @@ static std::wstring error(LONG code, bool win32=false) {
     wchar_t b[80];
     swprintf_s(b,L"%s エラー: 0x%08lX",win32?L"Windows":L"PC/SC",static_cast<unsigned long>(code));
     std::wstring result=b;
-    if(systemProvider || win32) {
+    {
         wchar_t* message=nullptr;
         DWORD flags=FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS;
         DWORD length=FormatMessageW(flags,nullptr,static_cast<DWORD>(code),0,
@@ -66,7 +65,6 @@ static std::wstring communicationError() {
     return lastPcscError==SCARD_S_SUCCESS?L"":L"\r\n"+error(lastPcscError);
 }
 static bool load(bool local) {
-    systemProvider=!local;
     if(module) { FreeLibrary(module); module=nullptr; }
     auto path=directory+L"\\WinSCard.dll";
     if(!local) { wchar_t system[MAX_PATH]; GetSystemDirectoryW(system,MAX_PATH); path=std::wstring(system)+L"\\WinSCard.dll"; }

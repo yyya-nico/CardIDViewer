@@ -6,7 +6,7 @@ C++17 / Win32 GUI。libaribb25 の `create_b_cas_card`、`init`、`get_id` で B
 
 `build/CardIDViewer.exe` を起動し、リーダーを選択して「ID取得」を押します。「コピー」で表示テキストをコピーできます。カードの交換後はもう一度「ID取得」を押してください。
 
-通常は Windows のシステムディレクトリにある WinSCard.dll を絶対パスで読み込みます。カードリーダーとドライバー、Smart Card サービスが必要です。Windows標準側では、エラーコードの横に FormatMessageW で取得したWindowsの説明を表示します（言語はWindowsの設定に従います）。カード初期化・ID取得の失敗時も、libaribb25のエラーに加えて元のPC/SCエラーを表示します。説明が見つからないコードはその旨を表示します。
+通常は Windows のシステムディレクトリにある WinSCard.dll を絶対パスで読み込みます。カードリーダーとドライバー、Smart Card サービスが必要です。エラーコードの横に FormatMessageW で取得したWindowsの説明を表示します（言語はWindowsの設定に従います）。カード初期化・ID取得の失敗時も、libaribb25のエラーに加えて元のPC/SCエラーを表示します。説明が見つからないコードはその旨を表示します。
 
 別の WinSCard.dll を使う場合は EXE と同じフォルダーに配置してから起動し、上部の選択欄で「EXE と同じ場所の WinSCard.dll」を選びます。選択するとリーダーを再検索します。標準のPC/SCも選び直せます。DLLはEXEと同じアーキテクチャで、SCardListReadersW / SCardConnectW を含むPC/SC関数を公開している必要があります。信頼できるDLLを使用してください。
 
