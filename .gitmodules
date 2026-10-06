@@ -1,0 +1,3 @@
+[submodule "vendor/libaribb25"]
+	path = vendor/libaribb25
+	url = https://github.com/tsukumijima/libaribb25.git
