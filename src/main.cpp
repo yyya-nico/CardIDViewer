@@ -137,8 +137,10 @@ static LRESULT CALLBACK proc(HWND h,UINT msg,WPARAM w,LPARAM l) {
         window=h;
         providers=control(L"COMBOBOX",L"",CBS_DROPDOWNLIST|WS_TABSTOP,1);
         SendMessageW(providers,CB_ADDSTRING,0,reinterpret_cast<LPARAM>(L"Windows 標準 PC/SC"));
-        if(GetFileAttributesW((directory+L"\\WinSCard.dll").c_str())!=INVALID_FILE_ATTRIBUTES) SendMessageW(providers,CB_ADDSTRING,0,reinterpret_cast<LPARAM>(L"EXE と同じ場所の WinSCard.dll"));
-        SendMessageW(providers,CB_SETCURSEL,0,0);
+        const DWORD localAttributes=GetFileAttributesW((directory+L"\\WinSCard.dll").c_str());
+        const bool hasLocalDll=localAttributes!=INVALID_FILE_ATTRIBUTES && !(localAttributes&FILE_ATTRIBUTE_DIRECTORY);
+        if(hasLocalDll) SendMessageW(providers,CB_ADDSTRING,0,reinterpret_cast<LPARAM>(L"EXE と同じ場所の WinSCard.dll"));
+        SendMessageW(providers,CB_SETCURSEL,hasLocalDll?1:0,0);
         readers=control(L"COMBOBOX",L"",CBS_DROPDOWNLIST|WS_TABSTOP|WS_VSCROLL,2);
         scan=control(L"BUTTON",L"再検索",WS_TABSTOP,3);
         readButton=control(L"BUTTON",L"ID取得",WS_TABSTOP,4);
